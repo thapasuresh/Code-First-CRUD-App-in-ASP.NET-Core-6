@@ -23,21 +23,20 @@ public class HomeController : Controller
 
     }
 
- 
-
     // Search for the Students Or
-    // else By default it returns the Student database datas.
+    // else By default it will return the Student db table on the Index View Page.
     public async Task<IActionResult> Index(string searchString)
     {
-        var students = from s in studentDb.Students
-                       select s;
+        var students = from item in studentDb.Students
+                       select item;
 
         if (!string.IsNullOrEmpty(searchString))
         {
             students = students.Where(s => s.Name.Contains(searchString));
         }
+        var studentList = await students.AsNoTracking().ToListAsync();
 
-        return View(await students.AsNoTracking().ToListAsync());
+        return View(studentList);
     }
 
 
