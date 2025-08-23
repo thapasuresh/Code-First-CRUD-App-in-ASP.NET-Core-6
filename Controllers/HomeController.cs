@@ -23,11 +23,23 @@ public class HomeController : Controller
 
     }
 
-    public async Task<IActionResult> Index()
+ 
+
+    // Search for the Students Or
+    // else By default it returns the Student database datas.
+    public async Task<IActionResult> Index(string searchString)
     {
-        var stdData = await studentDb.Students.ToListAsync();
-        return View(stdData);
+        var students = from s in studentDb.Students
+                       select s;
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            students = students.Where(s => s.Name.Contains(searchString));
+        }
+
+        return View(await students.AsNoTracking().ToListAsync());
     }
+
 
     public async Task<IActionResult> Details(int? id)
     {
@@ -43,7 +55,7 @@ public class HomeController : Controller
         }
 
         return View(stdData);
-        
+
     }
     public IActionResult Create()
     {
@@ -119,8 +131,6 @@ public class HomeController : Controller
         }
         return View(stdData);
     }
-
-
 
 
     [HttpPost, ActionName("Delete")]
